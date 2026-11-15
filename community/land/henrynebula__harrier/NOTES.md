@@ -39,16 +39,22 @@ that a hard filter pays: loops are capped at 40 turns and rejected when any
 opponent could arrive before the loop closes by a small margin.
 
 **Tactics.** Opportunistic cuts of adjacent enemy trails, dives at exposed
-opponents mid-loop (weighted by their trail length), and counter-raids into
-undefended home land while opponents are extended.
+opponents mid-loop (weighted by their trail length), and counter-raids that
+cut an open rectangle into undefended home land while opponents are extended,
+closing via the run home from the far corner rather than on the entry cell
+(closing on the entry would step on the outbound trail and void the plan).
 
 ## Results (local challenge.py, ~380 games)
 
-- Duel Elo +174 over the greedy anchor (52.1% win rate, avg area 591).
+- Duel Elo +139 over the greedy anchor (43.8% score rate, avg area 542); the
+  equivalent run before the counter-raid fix measured +174 - run-to-run
+  swing on 48 duel games is several points either way.
 - Uncontested throughput ~1480 average area vs the random anchor.
-- Overall 6th of 12 on the local ladder (Bradley-Terry), clear of the
-  greedy-anchor tier; melee deaths cut from 7.5 to 2.0 per game by the
+- Overall 6th of 13 on the local ladder (Bradley-Terry), clear of the
+  greedy-anchor tier; melee deaths cut from 7.5 to 2.1 per game by the
   arrival-window filter.
+- 3-hunter melee smoke test (three dedicated chaser bots): average rank
+  1.12 of 4, avg area 508 vs ~240 for the hunters, zero timeouts.
 
 Weak spot: melee against the strongest officials, who both farm and hunt;
 Harrier trades too much area for survival there.
