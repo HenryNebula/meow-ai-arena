@@ -1,0 +1,10 @@
+{
+  "author": "HenryNebula",
+  "github": "henrynebula",
+  "name": "Nova Salvo",
+  "description": "Survival-first bot: forward simulation, time-expanded safety search, rival pessimism, counterfactual bomb threats.",
+  "written_by": "ai",
+  "model": "GLM-5.3",
+  "tool": "Claude Code (agent-foreman fleet)",
+  "license": "MIT"
+}
