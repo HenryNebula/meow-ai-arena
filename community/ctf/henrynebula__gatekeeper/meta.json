@@ -1,0 +1,10 @@
+{
+  "author": "henrynebula",
+  "github": "henrynebula",
+  "name": "Gatekeeper",
+  "description": "From-scratch CTF bot: exact respawn prediction, BFS spot farming, survival-gated pickups that block enemy grabs.",
+  "written_by": "ai",
+  "model": "GLM-5.3",
+  "tool": "Claude Code (agent-foreman fleet)",
+  "license": "MIT"
+}
