@@ -215,10 +215,16 @@ static Eval walkPath(const vector<int>& dirs) {
 
 // Beeline exposure model, per opponent. For each opponent we take the
 // tightest "gap" between when we lay a trail cell and when that opponent
-// could step on it (laid cells have gap = distance now). Gaps inside `fear`
-// are acute and vetoed elsewhere; beyond it, converting a gap into a cut
-// requires a deliberate detour, so the hazard is priced as hazardK divided by
-// the detour size - one number per opponent, independent of loop length.
+// could step on it (laid cells have gap = distance now). Pricing is
+// deliberately non-monotone in danger: gaps inside the `fear` window are
+// acute and price at zero (a non-positive detour is never charged), so in
+// 1v1 the closest beelines cost nothing here. Defense against them is
+// reactive instead - chaser detection plus the bail-or-ride check in
+// plan-following - and the melee arrival-window filter in the planner is
+// the only hard veto anywhere. Beyond the window, converting a gap into a
+// cut requires a deliberate detour, so the hazard is priced as hazardK
+// divided by the detour size - one number per opponent, independent of
+// loop length.
 // Simultaneous arrival on a future territory cell (head-on) also counts.
 static double pathRisk(const vector<int>& dirs, const Eval& ev) {
     if (ev.R == 0) return 0;
@@ -614,7 +620,11 @@ static int decide() {
                         }
                     }
                     if (aMin < 0) continue;
-                    for (int a = aMin; a <= aMin + cfg::maxDepth; a++) {
+                    // aMin >= 1 by construction (it counts steps to the first
+                    // non-ours cell, inclusive); max() keeps a degenerate
+                    // zero-depth out-and-back from ever being emitted, since
+                    // that shape would retrace its own trail on the way back.
+                    for (int a = max(aMin, 1); a <= aMin + cfg::maxDepth; a++) {
                         if (!inb(ax + DX[dir] * a, ay + DY[dir] * a)) break;
                         for (int b = 1; b < 64; b++) {
                             int fx = ax + DX[dir] * a, fy = ay + DY[dir] * a;
