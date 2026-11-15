@@ -659,8 +659,12 @@ static int decide() {
                 consider(full, 3, bonus, -1);   // kind 3: dive, exempt from loop caps
             }
         }
-        // counter-raids: while an enemy is extended on its own loop, route a
-        // rectangle into its undefended home land and run home
+        // counter-raids: while an enemy is extended on its own loop, cut a
+        // rectangle into its undefended home land, then run home from the
+        // open corner (the dive shape). The rectangle is left open on the
+        // entry side on purpose: closing it on the entry cell would step on
+        // the trail laid getting there, and the plan would abort itself one
+        // turn after crossing the border.
         if (elapsedMs() <= cfg::planMs) {
             for (int e = 0; e < N; e++) {
                 if (e == ME || !threat[e] || st.ptrail[e] < 6) continue;
@@ -676,18 +680,15 @@ static int decide() {
                         for (int b : {6, 10}) {
                             int fx = ex + DX[d0] * a, fy = ey + DY[d0] * a;
                             int cx = fx + DX[side] * b, cy = fy + DY[side] * b;
-                            if (!inb(fx, fy) || !inb(cx, cy)) continue;
+                            int ox = ex + DX[side] * b, oy = ey + DY[side] * b;
+                            if (!inb(fx, fy) || !inb(cx, cy) || !inb(ox, oy)) continue;
                             static vector<int> raid;
                             raid = p1;
                             for (int i = 0; i < a; i++) raid.push_back(d0);
                             for (int i = 0; i < b; i++) raid.push_back(side);
                             for (int i = 0; i < a; i++) raid.push_back(d0 ^ 1);
-                            for (int i = 0; i < b; i++) raid.push_back(side ^ 1);
                             if (raid.size() > 90) continue;
-                            int rx = ex, ry = ey;
-                            for (int d : raid) { rx += DX[d]; ry += DY[d]; }   // back at entry
-                            (void)rx; (void)ry;
-                            vector<int> p2 = bfsHome(ex, ey, side ^ 1, true);
+                            vector<int> p2 = bfsHome(ox, oy, d0 ^ 1, true);
                             if (p2.empty()) continue;
                             vector<int> full = raid;
                             full.insert(full.end(), p2.begin(), p2.end());
